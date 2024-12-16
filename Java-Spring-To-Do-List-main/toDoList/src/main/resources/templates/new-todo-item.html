@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        :root {
+            --primary-color: #1e1e1e;
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --secondary-color: rgba(230, 42, 244, 0.47);
+            --success-color: rgba(230, 42, 244, 0.47);
+            --error-color: #6c757d;
+        }
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+        }
+        .btn-back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-back:hover {
+            background-color: #212a88;
+            transform: scale(1.05);
+        }
+        .container {
+            background-color: var(--primary-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 251, 4, 0.5);
+            width: 400px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        input[type="text"],
+        input[type="date"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+        input:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 5px rgb(33, 136, 56);
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button.disabled {
+            background-color: var(--error-color);
+            cursor: not-allowed;
+        }
+        button:hover:not(.disabled) {
+            background-color: #212a88;
+        }
+        .error-message {
+            position: fixed;
+            top: 30px;
+            right: 10px;
+            background-color: #ff3333;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<a class="btn-back" href="/home">
+    <i class="fas fa-arrow-left"></i> Back
+</a>
+<div class="container">
+    <h2>Add a New Todo Item</h2>
+    <form action="#" th:action="@{/todo}" th:object="${toDoItem}" method="POST">
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input class="form-control"
+                   type="text"
+                   th:field="*{description}"
+                   id="description"
+                   placeholder="Enter the description"
+                   maxlength="255"
+                   required>
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input class="form-control"
+                   type="date"
+                   th:field="*{deadline}"
+                   id="deadline"
+                   required>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn" id="addTodoButton">
+                <i class="fas fa-plus-square"></i> Add Todo
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Error Message -->
+<div class="error-message" id="deadlineError">
+    Deadline could not be in the past!
+</div>
+
+<script>
+    const deadlineInput = document.getElementById('deadline');
+    const submitButton = document.getElementById('addTodoButton');
+    const deadlineError = document.getElementById('deadlineError');
+
+    deadlineInput.addEventListener('input', function() {
+        const deadlineDate = new Date(this.value);
+        const now = new Date();
+
+        if (deadlineDate < now) {
+            submitButton.disabled = true;
+            submitButton.classList.add('disabled');
+            deadlineError.style.display = 'block';
+        } else {
+            submitButton.disabled = false;
+            submitButton.classList.remove('disabled');
+            deadlineError.style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
